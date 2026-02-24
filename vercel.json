@@ -12,7 +12,34 @@
       "dest": "/api/index.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/css/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/demos/(.*)",
+      "dest": "/demos/$1"
+    },
+    {
+      "src": "/markmap.svg",
+      "dest": "/markmap.svg"
+    },
+    {
+      "src": "/demos.html",
+      "dest": "/demos.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     },
     {
       "src": "/(.*)",
