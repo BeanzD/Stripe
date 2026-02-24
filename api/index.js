@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 
@@ -420,10 +419,6 @@ app.get('/api/config', (req, res) => {
     res.json({
         publishableKey: process.env.STRIPE_PUBLISHABLE_KEY
     });
-});
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 module.exports = (req, res) => {
