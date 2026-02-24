@@ -1,7 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
+    console.error('错误: 未配置 STRIPE_SECRET_KEY 环境变量');
+    console.error('请在 Vercel 项目设置中添加环境变量: STRIPE_SECRET_KEY');
+}
+
+const stripe = require('stripe')(stripeSecretKey);
 const app = express();
 const PORT = process.env.PORT || 3001;
 

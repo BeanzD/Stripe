@@ -25,11 +25,32 @@ npm start
 
 ## Vercel 部署
 
+### ⚠️ 重要：必须先配置环境变量
+
+**在部署之前，必须先在 Vercel 中配置环境变量，否则会报错！**
+
+详细配置步骤请查看 [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+### 快速配置步骤
+
+1. **获取 Stripe API 密钥**
+   - 访问 [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+   - 复制 Secret key（`sk_test_` 开头）和 Publishable key（`pk_test_` 开头）
+
+2. **在 Vercel 中添加环境变量**
+   - 进入 Vercel 项目 → Settings → Environment Variables
+   - 添加以下环境变量（选择所有环境：Production, Preview, Development）：
+     - `STRIPE_SECRET_KEY`: `sk_test_xxxxxx`
+     - `STRIPE_PUBLISHABLE_KEY`: `pk_test_xxxxxx`
+
+3. **重新部署**
+   - 配置环境变量后，在 Vercel 中重新部署项目
+
 ### 1. 连接 GitHub 仓库
 
 将此项目推送到 GitHub 后，在 Vercel 中导入该仓库。
 
-### 2. 配置环境变量（重要！）
+### 2. 配置环境变量（必须！）
 
 在 Vercel 项目设置中添加以下环境变量：
 
@@ -53,10 +74,18 @@ npm start
 
 ### 5. 常见问题
 
-如果遇到 `FUNCTION_INVOCATION_FAILED` 错误：
-- 确保已配置所有必需的环境变量
-- 检查 Vercel 部署日志查看具体错误信息
-- 确保代码已导出为模块（`module.exports = app`）
+**错误：`Neither apiKey nor config.authenticator provided`**
+- 原因：未配置 `STRIPE_SECRET_KEY` 环境变量
+- 解决：按照上述步骤在 Vercel 中配置环境变量，然后重新部署
+
+**错误：`FUNCTION_INVOCATION_FAILED`**
+- 原因：代码未正确导出为模块或缺少环境变量
+- 解决：
+  1. 确保已配置所有必需的环境变量
+  2. 检查 Vercel 部署日志查看具体错误信息
+  3. 确保代码已导出为模块（`module.exports = app`）
+
+详细故障排除请查看 [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
 
 ## 项目结构
 
