@@ -405,7 +405,11 @@ app.get('/api/config', (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`API Server running at http://localhost:${PORT}`);
-    console.log(`Stripe API Key: ${process.env.STRIPE_SECRET_KEY ? '已配置' : '未配置'}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`API Server running at http://localhost:${PORT}`);
+        console.log(`Stripe API Key: ${process.env.STRIPE_SECRET_KEY ? '已配置' : '未配置'}`);
+    });
+}
+
+module.exports = app;

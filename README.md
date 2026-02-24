@@ -29,25 +29,34 @@ npm start
 
 将此项目推送到 GitHub 后，在 Vercel 中导入该仓库。
 
-### 2. 配置环境变量
+### 2. 配置环境变量（重要！）
 
 在 Vercel 项目设置中添加以下环境变量：
 
 - `STRIPE_SECRET_KEY`: Stripe 密钥（以 `sk_` 开头）
 - `STRIPE_PUBLISHABLE_KEY`: Stripe 可发布密钥（以 `pk_` 开头）
 
-### 3. 部署配置
+**注意：** 如果不配置这些环境变量，部署会失败或无法正常工作。
+
+### 3. 获取密钥
+
+从 [Stripe Dashboard](https://dashboard.stripe.com/apikeys) 获取 API 密钥：
+- 使用测试密钥进行开发和测试
+- 生产环境请使用实时密钥
+
+### 4. 部署配置
 
 项目已包含 `vercel.json` 配置文件，会自动处理：
 - Node.js 服务器
 - API 路由
 - 静态文件服务
 
-### 4. 获取密钥
+### 5. 常见问题
 
-从 [Stripe Dashboard](https://dashboard.stripe.com/apikeys) 获取 API 密钥：
-- 使用测试密钥进行开发和测试
-- 生产环境请使用实时密钥
+如果遇到 `FUNCTION_INVOCATION_FAILED` 错误：
+- 确保已配置所有必需的环境变量
+- 检查 Vercel 部署日志查看具体错误信息
+- 确保代码已导出为模块（`module.exports = app`）
 
 ## 项目结构
 
