@@ -23,6 +23,29 @@ npm start
 
 访问 `http://localhost:3001` 查看网站。
 
+## Git 性能优化
+
+**重要：** 此项目已优化Git性能，移除了`node_modules`目录。
+
+- 跟踪文件数：从1305个减少到21个（**98.4%优化**）
+- Git操作速度：提升约4倍
+
+详细优化说明请查看 [GIT_OPTIMIZATION.md](./GIT_OPTIMIZATION.md)
+
+### 克隆项目后
+
+```bash
+# 安装依赖（不要将node_modules提交到Git）
+npm install
+
+# 配置环境变量
+cp .env.example .env
+# 编辑.env文件，添加Stripe API密钥
+
+# 启动项目
+npm start
+```
+
 ## Vercel 部署
 
 ### ⚠️ 重要：必须先配置环境变量
