@@ -42,6 +42,10 @@ let paymentIntentIdCounter = 1;
 let accountIdCounter = 1;
 let eventIdCounter = 1;
 
+app.get('/', (req, res) => {
+  res.send('Hello World!'); // 根路径返回内容
+});
+
 app.post('/api/customers', async (req, res) => {
     try {
         const { email, name, phone } = req.body;
