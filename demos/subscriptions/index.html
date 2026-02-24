@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订阅教程演示 - 产品和价格</title>
+    <link rel="stylesheet" href="../../css/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>订阅教程演示</h1>
+            <p class="demo-subtitle">学习如何创建产品、价格和订阅</p>
+        </header>
+
+        <div class="demo-content">
+            <section class="demo-section">
+                <h2>1. 创建产品</h2>
+                <p>创建一个新产品，用于销售商品或服务：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="productName">产品名称</label>
+                        <input type="text" id="productName" placeholder="高级会员">
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">产品描述</label>
+                        <textarea id="productDescription" rows="3" placeholder="享受所有高级功能和专属服务"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">产品图片 URL</label>
+                        <input type="url" id="productImage" placeholder="https://example.com/product.jpg">
+                    </div>
+                    <button class="btn btn-primary" onclick="createProduct()">创建产品</button>
+                </div>
+
+                <div class="result-panel" id="productResult" style="display: none;">
+                    <h3>产品创建结果</h3>
+                    <pre id="productResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>2. 创建价格</h2>
+                <p>为产品创建价格，支持一次性支付和订阅：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="priceProduct">选择产品</label>
+                        <select id="priceProduct">
+                            <option value="">-- 选择产品 --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceAmount">价格金额（元）</label>
+                        <input type="number" id="priceAmount" value="99" min="1" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="priceCurrency">货币</label>
+                        <select id="priceCurrency">
+                            <option value="cny">人民币 (CNY)</option>
+                            <option value="usd">美元 (USD)</option>
+                            <option value="eur">欧元 (EUR)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceType">价格类型</label>
+                        <select id="priceType" onchange="toggleRecurring()">
+                            <option value="one_time">一次性支付</option>
+                            <option value="recurring">订阅</option>
+                        </select>
+                    </div>
+                    <div id="recurringOptions" style="display: none;">
+                        <div class="form-group">
+                            <label for="billingInterval">计费周期</label>
+                            <select id="billingInterval">
+                                <option value="month">月度</option>
+                                <option value="year">年度</option>
+                                <option value="week">周度</option>
+                                <option value="day">日度</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trialDays">试用期（天）</label>
+                            <input type="number" id="trialDays" value="7" min="0">
+                        </div>
+                    </div>
+                    <button class="btn btn-success" onclick="createPrice()">创建价格</button>
+                </div>
+
+                <div class="result-panel" id="priceResult" style="display: none;">
+                    <h3>价格创建结果</h3>
+                    <pre id="priceResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>3. 创建订阅</h2>
+                <p>为客户创建订阅，支持试用期和优惠券：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="subscriptionCustomer">客户 ID</label>
+                        <input type="text" id="subscriptionCustomer" placeholder="cus_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriptionPrice">选择价格</label>
+                        <select id="subscriptionPrice">
+                            <option value="">-- 选择价格 --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriptionTrial">试用期（天）</label>
+                        <input type="number" id="subscriptionTrial" value="14" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriptionCoupon">优惠券代码</label>
+                        <input type="text" id="subscriptionCoupon" placeholder="PROMO20">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriptionQuantity">数量</label>
+                        <input type="number" id="subscriptionQuantity" value="1" min="1">
+                    </div>
+                    <button class="btn btn-info" onclick="createSubscription()">创建订阅</button>
+                </div>
+
+                <div class="result-panel" id="subscriptionResult" style="display: none;">
+                    <h3>订阅创建结果</h3>
+                    <pre id="subscriptionResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>4. 管理订阅</h2>
+                <p>更新、暂停、取消订阅：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="manageSubscriptionId">订阅 ID</label>
+                        <input type="text" id="manageSubscriptionId" placeholder="sub_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPriceId">新价格 ID（用于升级/降级）</label>
+                        <input type="text" id="newPriceId" placeholder="price_xxx">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="updateSubscription()">更新订阅</button>
+                        <button class="btn btn-warning" onclick="pauseSubscription()">暂停订阅</button>
+                        <button class="btn btn-danger" onclick="cancelSubscription()">取消订阅</button>
+                    </div>
+                </div>
+
+                <div class="result-panel" id="manageSubscriptionResult" style="display: none;">
+                    <h3>订阅管理结果</h3>
+                    <pre id="manageSubscriptionResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>5. 按比例计费预览</h2>
+                <p>预览订阅升级或降级的费用变化：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="prorationCustomerId">客户 ID</label>
+                        <input type="text" id="prorationCustomerId" placeholder="cus_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="prorationSubscriptionId">订阅 ID</label>
+                        <input type="text" id="prorationSubscriptionId" placeholder="sub_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="prorationNewPrice">新价格 ID</label>
+                        <input type="text" id="prorationNewPrice" placeholder="price_xxx">
+                    </div>
+                    <button class="btn btn-secondary" onclick="previewProration()">预览按比例计费</button>
+                </div>
+
+                <div class="result-panel" id="prorationResult" style="display: none;">
+                    <h3>按比例计费预览</h3>
+                    <div id="prorationResultContent"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="demo-footer">
+            <a href="../../index.html" class="btn btn-secondary">返回教程</a>
+            <a href="../../demos.html" class="btn btn-secondary">查看所有演示</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        let products = [];
+        let prices = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/products`);
+                const data = await response.json();
+                products = data.data || [];
+                updateProductSelect();
+                console.log('产品加载成功:', products);
+            } catch (error) {
+                console.error('加载产品失败:', error);
+            }
+        }
+
+        async function loadPrices() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/prices`);
+                const data = await response.json();
+                prices = data.data || [];
+                updatePriceSelect();
+                console.log('价格加载成功:', prices);
+            } catch (error) {
+                console.error('加载价格失败:', error);
+            }
+        }
+
+        async function createProduct() {
+            const name = document.getElementById('productName').value;
+            const description = document.getElementById('productDescription').value;
+            const image = document.getElementById('productImage').value;
+
+            if (!name) {
+                alert('请输入产品名称');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/products`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, images: image })
+                });
+                const data = await response.json();
+                
+                products.push(data);
+                updateProductSelect();
+                showResult('productResult', 'productResultContent', data);
+            } catch (error) {
+                showError('productResult', 'productResultContent', error);
+            }
+        }
+
+        async function createPrice() {
+            const product = document.getElementById('priceProduct').value;
+            const amount = document.getElementById('priceAmount').value;
+            const currency = document.getElementById('priceCurrency').value;
+            const type = document.getElementById('priceType').value;
+
+            if (!product) {
+                alert('请选择产品');
+                return;
+            }
+
+            const priceData = {
+                product,
+                unit_amount: Math.round(amount * 100),
+                currency
+            };
+
+            if (type === 'recurring') {
+                priceData.recurring = {
+                    interval: document.getElementById('billingInterval').value
+                };
+                const trialDays = document.getElementById('trialDays').value;
+                if (trialDays > 0) {
+                    priceData.recurring.trial_period_days = parseInt(trialDays);
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/prices`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(priceData)
+                });
+                
+                console.log('创建价格请求数据:', priceData);
+                console.log('响应状态:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || '创建价格失败');
+                }
+                
+                const data = await response.json();
+                console.log('创建价格响应数据:', data);
+                
+                if (!data) {
+                    throw new Error('创建价格失败：无效的响应数据');
+                }
+                
+                if (!data.id) {
+                    throw new Error('创建价格失败：响应中缺少价格 ID');
+                }
+                
+                prices.push(data);
+                updatePriceSelect();
+                showResult('priceResult', 'priceResultContent', data);
+            } catch (error) {
+                console.error('创建价格错误:', error);
+                showError('priceResult', 'priceResultContent', error);
+            }
+        }
+
+        async function createSubscription() {
+            const customer = document.getElementById('subscriptionCustomer').value;
+            const price = document.getElementById('subscriptionPrice').value;
+            const trialDays = document.getElementById('subscriptionTrial').value;
+            const coupon = document.getElementById('subscriptionCoupon').value;
+            const quantity = document.getElementById('subscriptionQuantity').value;
+
+            if (!customer || !price) {
+                alert('请输入客户 ID 和选择价格');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/subscriptions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customer,
+                        price,
+                        trial_period_days: parseInt(trialDays),
+                        coupon: coupon || undefined,
+                        quantity: parseInt(quantity)
+                    })
+                });
+                const data = await response.json();
+                
+                showResult('subscriptionResult', 'subscriptionResultContent', data);
+                document.getElementById('manageSubscriptionId').value = data.id;
+            } catch (error) {
+                showError('subscriptionResult', 'subscriptionResultContent', error);
+            }
+        }
+
+        async function updateSubscription() {
+            const subscriptionId = document.getElementById('manageSubscriptionId').value;
+            const newPriceId = document.getElementById('newPriceId').value;
+
+            if (!subscriptionId) {
+                alert('请输入订阅 ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/subscriptions/${subscriptionId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        price: newPriceId,
+                        proration_behavior: 'create_prorations'
+                    })
+                });
+                const data = await response.json();
+                
+                showResult('manageSubscriptionResult', 'manageSubscriptionResultContent', data);
+            } catch (error) {
+                showError('manageSubscriptionResult', 'manageSubscriptionResultContent', error);
+            }
+        }
+
+        async function pauseSubscription() {
+            const subscriptionId = document.getElementById('manageSubscriptionId').value;
+
+            if (!subscriptionId) {
+                alert('请输入订阅 ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/subscriptions/${subscriptionId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        pause_behavior: 'void'
+                    })
+                });
+                const data = await response.json();
+                
+                showResult('manageSubscriptionResult', 'manageSubscriptionResultContent', data);
+            } catch (error) {
+                showError('manageSubscriptionResult', 'manageSubscriptionResultContent', error);
+            }
+        }
+
+        async function cancelSubscription() {
+            const subscriptionId = document.getElementById('manageSubscriptionId').value;
+
+            if (!subscriptionId) {
+                alert('请输入订阅 ID');
+                return;
+            }
+
+            if (!confirm('确定要取消此订阅吗？')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/subscriptions/${subscriptionId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                showResult('manageSubscriptionResult', 'manageSubscriptionResultContent', data);
+            } catch (error) {
+                showError('manageSubscriptionResult', 'manageSubscriptionResultContent', error);
+            }
+        }
+
+        async function previewProration() {
+            const customer = document.getElementById('prorationCustomerId').value;
+            const subscription = document.getElementById('prorationSubscriptionId').value;
+            const newPrice = document.getElementById('prorationNewPrice').value;
+
+            if (!customer || !subscription || !newPrice) {
+                alert('请填写所有字段');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/invoices/upcoming', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customer, subscription, newPrice })
+                });
+                const data = await response.json();
+                
+                const contentDiv = document.getElementById('prorationResultContent');
+                contentDiv.innerHTML = `
+                    <div class="proration-summary">
+                        <div class="proration-item">
+                            <strong>预计总金额：</strong>
+                            <span class="amount">${(data.total / 100).toFixed(2)} ${data.currency.toUpperCase()}</span>
+                        </div>
+                        <div class="proration-item">
+                            <strong>按比例计费项目：</strong>
+                        </div>
+                        ${data.lines.data.map(line => `
+                            <div class="proration-line">
+                                <span>${line.description}</span>
+                                <span class="${line.amount >= 0 ? 'positive' : 'negative'}">
+                                    ${line.amount >= 0 ? '+' : ''}${(line.amount / 100).toFixed(2)}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                document.getElementById('prorationResult').style.display = 'block';
+            } catch (error) {
+                showError('prorationResult', 'prorationResultContent', error);
+            }
+        }
+
+        function toggleRecurring() {
+            const type = document.getElementById('priceType').value;
+            const recurringOptions = document.getElementById('recurringOptions');
+            recurringOptions.style.display = type === 'recurring' ? 'block' : 'none';
+        }
+
+        function updateProductSelect() {
+            const select = document.getElementById('priceProduct');
+            select.innerHTML = '<option value="">-- 选择产品 --</option>' +
+                products.map(p => {
+                    if (!p) return '';
+                    const name = p.name || '未知产品';
+                    return `<option value="${p.id}">${name}</option>`;
+                }).join('');
+        }
+
+        function updatePriceSelect() {
+            const select = document.getElementById('subscriptionPrice');
+            select.innerHTML = '<option value="">-- 选择价格 --</option>' +
+                prices.map(p => {
+                    if (!p) return '';
+                    const currency = p.currency || 'usd';
+                    const amount = p.unit_amount || 0;
+                    const nickname = p.nickname || p.id || '未知价格';
+                    return `<option value="${p.id}">${nickname} - ${(amount / 100).toFixed(2)} ${currency.toUpperCase()}</option>`;
+                }).join('');
+        }
+
+        function showResult(panelId, contentId, data) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = JSON.stringify(data, null, 2);
+            content.style.color = '#f8f8f2';
+            panel.style.display = 'block';
+        }
+
+        function showError(panelId, contentId, error) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = `错误: ${error.message}`;
+            content.style.color = '#ef4444';
+            panel.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            loadPrices();
+        });
+    </script>
+</body>
+</html>

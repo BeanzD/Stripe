@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe 演示 - 可执行的实例</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#635BFF"/>
+                    <path d="M12 20h16M12 14h10M12 26h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Stripe 演示</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link">教程</a>
+                <a href="demos.html" class="nav-link active">演示</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Stripe 演示</h1>
+            <p class="hero-subtitle">真正可执行的实例，帮助您快速上手 Stripe</p>
+            <div class="hero-buttons">
+                <a href="index.html" class="btn btn-primary">返回教程</a>
+                <a href="index.html" class="btn btn-warning">查看演示</a>
+                <a href="https://stripe.com/docs" target="_blank" class="btn btn-secondary">官方文档</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>演示列表</h2>
+                    <p class="section-description">选择一个演示开始学习</p>
+                </div>
+
+                <div class="demo-categories">
+                    <div class="demo-category">
+                        <div class="category-header">
+                            <div class="category-icon">🚀</div>
+                            <h3>入门指南</h3>
+                            <p>学习 Stripe 基础概念和 SDK 使用</p>
+                        </div>
+                        <div class="demo-list">
+                            <a href="demos/getting-started/index.html" class="demo-link">
+                                <div class="demo-link-icon">📝</div>
+                                <div class="demo-link-content">
+                                    <h4>API 密钥和 SDK 使用</h4>
+                                    <p>配置 API 密钥，创建和管理客户</p>
+                                </div>
+                                <div class="demo-link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="demo-category">
+                        <div class="category-header">
+                            <div class="category-icon">💳</div>
+                            <h3>支付教程</h3>
+                            <p>学习如何处理支付和支付方式</p>
+                        </div>
+                        <div class="demo-list">
+                            <a href="demos/payments/index.html" class="demo-link">
+                                <div class="demo-link-icon">💰</div>
+                                <div class="demo-link-content">
+                                    <h4>Payment Intent & Elements</h4>
+                                    <p>创建支付意图，使用 Elements 构建支付表单</p>
+                                </div>
+                                <div class="demo-link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="demo-category">
+                        <div class="category-header">
+                            <div class="category-icon">🔄</div>
+                            <h3>订阅教程</h3>
+                            <p>构建和管理订阅系统</p>
+                        </div>
+                        <div class="demo-list">
+                            <a href="demos/subscriptions/index.html" class="demo-link">
+                                <div class="demo-link-icon">📦</div>
+                                <div class="demo-link-content">
+                                    <h4>产品和订阅管理</h4>
+                                    <p>创建产品和价格，管理订阅和按比例计费</p>
+                                </div>
+                                <div class="demo-link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="demo-category">
+                        <div class="category-header">
+                            <div class="category-icon">⚡</div>
+                            <h3>高级功能</h3>
+                            <p>Webhooks、Connect 平台和风险评估</p>
+                        </div>
+                        <div class="demo-list">
+                            <a href="demos/advanced/index.html" class="demo-link">
+                                <div class="demo-link-icon">🔔</div>
+                                <div class="demo-link-content">
+                                    <h4>Webhooks & Connect</h4>
+                                    <p>配置 Webhooks，管理子账户和资金分配</p>
+                                </div>
+                                <div class="demo-link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="demo-category">
+                        <div class="category-header">
+                            <div class="category-icon">🛠️</div>
+                            <h3>开发工具</h3>
+                            <p>CLI 工具、测试方法和最佳实践</p>
+                        </div>
+                        <div class="demo-list">
+                            <a href="demos/tools/index.html" class="demo-link">
+                                <div class="demo-link-icon">🧪</div>
+                                <div class="demo-link-content">
+                                    <h4>CLI & 测试方法</h4>
+                                    <p>使用 Stripe CLI，测试卡号和故障排查</p>
+                                </div>
+                                <div class="demo-link-arrow">→</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h2>如何使用演示</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-icon">1️⃣</div>
+                            <h3>选择演示</h3>
+                            <p>从上面的列表中选择一个您感兴趣的演示</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">2️⃣</div>
+                            <h3>阅读说明</h3>
+                            <p>每个演示都有详细的说明和代码示例</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">3️⃣</div>
+                            <h3>执行操作</h3>
+                            <p>使用提供的表单和按钮执行实际操作</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">4️⃣</div>
+                            <h3>查看结果</h3>
+                            <p>实时查看操作结果和返回的数据</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note-section">
+                    <div class="note">
+                        <div class="note-title">⚠️ 重要提示</div>
+                        <ul>
+                            <li>所有演示都使用 Stripe 的测试环境，不会处理真实资金</li>
+                            <li>您需要有效的 Stripe API 密钥才能执行某些操作</li>
+                            <li>演示中的 API 调用需要后端服务器支持</li>
+                            <li>建议先阅读相关教程，再使用演示进行实践</li>
+                            <li>测试卡号仅用于测试，不能用于真实支付</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Stripe 教程</h4>
+                    <p>从入门到精通的完整学习指南</p>
+                </div>
+                <div class="footer-section">
+                    <h4>相关链接</h4>
+                    <ul>
+                        <li><a href="index.html">返回教程</a></li>
+                        <li><a href="https://stripe.com/docs" target="_blank">Stripe 官方文档</a></li>
+                        <li><a href="https://stripe.com/api" target="_blank">API 参考</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stripe 教程. 本教程仅供学习使用，Stripe 是 Stripe, Inc. 的注册商标。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

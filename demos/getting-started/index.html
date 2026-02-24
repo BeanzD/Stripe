@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>入门指南演示 - Stripe SDK 使用</title>
+    <link rel="stylesheet" href="../../css/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>入门指南演示</h1>
+            <p class="demo-subtitle">学习如何使用 Stripe SDK 进行 API 调用</p>
+        </header>
+
+        <div class="demo-content">
+            <section class="demo-section">
+                <h2>1. API 密钥配置</h2>
+                <p>在开始之前，您需要配置您的 Stripe API 密钥。对于演示，我们使用测试密钥。</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>.env 文件</span>
+                        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>STRIPE_PUBLISHABLE_KEY=pk_test_51M...
+STRIPE_SECRET_KEY=sk_test_51M...</code></pre>
+                </div>
+
+                <div class="config-panel">
+                    <h3>配置您的 API 密钥</h3>
+                    <div class="form-group">
+                        <label for="publishableKey">可发布密钥 (pk_test_...)</label>
+                        <input type="text" id="publishableKey" placeholder="pk_test_..." value="pk_test_51M...">
+                    </div>
+                    <div class="form-group">
+                        <label for="secretKey">秘密密钥 (sk_test_...)</label>
+                        <input type="password" id="secretKey" placeholder="sk_test_..." value="sk_test_51M...">
+                    </div>
+                    <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>2. 创建客户</h2>
+                <p>使用 Stripe SDK 创建一个新客户：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="customerEmail">客户邮箱</label>
+                        <input type="email" id="customerEmail" placeholder="customer@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerName">客户姓名</label>
+                        <input type="text" id="customerName" placeholder="张三">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">客户电话</label>
+                        <input type="tel" id="customerPhone" placeholder="+8613800138000">
+                    </div>
+                    <button class="btn btn-success" onclick="createCustomer()">创建客户</button>
+                </div>
+
+                <div class="result-panel" id="customerResult" style="display: none;">
+                    <h3>创建结果</h3>
+                    <pre id="customerResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>3. 检索客户</h2>
+                <p>通过客户 ID 检索客户信息：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="customerId">客户 ID</label>
+                        <input type="text" id="customerId" placeholder="cus_xxx">
+                    </div>
+                    <button class="btn btn-info" onclick="retrieveCustomer()">检索客户</button>
+                </div>
+
+                <div class="result-panel" id="retrieveResult" style="display: none;">
+                    <h3>检索结果</h3>
+                    <pre id="retrieveResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>4. 列出所有客户</h2>
+                <p>获取您的 Stripe 账户中的所有客户：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="limit">限制数量</label>
+                        <input type="number" id="limit" value="10" min="1" max="100">
+                    </div>
+                    <button class="btn btn-warning" onclick="listCustomers()">列出客户</button>
+                </div>
+
+                <div class="result-panel" id="listResult" style="display: none;">
+                    <h3>客户列表</h3>
+                    <div id="customerList"></div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>5. 更新客户</h2>
+                <p>更新现有客户的信息：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="updateCustomerId">客户 ID</label>
+                        <input type="text" id="updateCustomerId" placeholder="cus_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateEmail">新邮箱</label>
+                        <input type="email" id="updateEmail" placeholder="newemail@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateName">新姓名</label>
+                        <input type="text" id="updateName" placeholder="李四">
+                    </div>
+                    <button class="btn btn-primary" onclick="updateCustomer()">更新客户</button>
+                </div>
+
+                <div class="result-panel" id="updateResult" style="display: none;">
+                    <h3>更新结果</h3>
+                    <pre id="updateResultContent"></pre>
+                </div>
+            </section>
+        </div>
+
+        <div class="demo-footer">
+            <a href="../../index.html" class="btn btn-secondary">返回教程</a>
+            <a href="../../demos.html" class="btn btn-secondary">查看所有演示</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        let config = {
+            publishableKey: 'pk_test_51M...',
+            secretKey: 'sk_test_51M...'
+        };
+
+        function saveConfig() {
+            config.publishableKey = document.getElementById('publishableKey').value;
+            config.secretKey = document.getElementById('secretKey').value;
+            
+            localStorage.setItem('stripeConfig', JSON.stringify(config));
+            alert('配置已保存！');
+        }
+
+        function loadConfig() {
+            const saved = localStorage.getItem('stripeConfig');
+            if (saved) {
+                config = JSON.parse(saved);
+                document.getElementById('publishableKey').value = config.publishableKey;
+                document.getElementById('secretKey').value = config.secretKey;
+            }
+        }
+
+        async function createCustomer() {
+            const email = document.getElementById('customerEmail').value;
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+
+            if (!email) {
+                alert('请输入客户邮箱');
+                return;
+            }
+
+            try {
+                const response = await axios.post(`${API_BASE_URL}/api/customers`, {
+                    email,
+                    name,
+                    phone
+                });
+
+                showResult('customerResult', 'customerResultContent', response.data);
+                document.getElementById('customerId').value = response.data.id;
+                document.getElementById('updateCustomerId').value = response.data.id;
+            } catch (error) {
+                showError('customerResult', 'customerResultContent', error);
+            }
+        }
+
+        async function retrieveCustomer() {
+            const customerId = document.getElementById('customerId').value;
+
+            if (!customerId) {
+                alert('请输入客户 ID');
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/customers/${customerId}`);
+                showResult('retrieveResult', 'retrieveResultContent', response.data);
+            } catch (error) {
+                showError('retrieveResult', 'retrieveResultContent', error);
+            }
+        }
+
+        async function listCustomers() {
+            const limit = document.getElementById('limit').value;
+
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/customers?limit=${limit}`);
+                
+                const listDiv = document.getElementById('customerList');
+                if (response.data.data && response.data.data.length > 0) {
+                    listDiv.innerHTML = response.data.data.map(customer => `
+                        <div class="customer-item">
+                            <strong>${customer.name || '未命名'}</strong>
+                            <span>${customer.email}</span>
+                            <small>${customer.id}</small>
+                        </div>
+                    `).join('');
+                } else {
+                    listDiv.innerHTML = '<p>没有找到客户</p>';
+                }
+                
+                document.getElementById('listResult').style.display = 'block';
+            } catch (error) {
+                showError('listResult', 'customerList', error);
+            }
+        }
+
+        async function updateCustomer() {
+            const customerId = document.getElementById('updateCustomerId').value;
+            const email = document.getElementById('updateEmail').value;
+            const name = document.getElementById('updateName').value;
+
+            if (!customerId) {
+                alert('请输入客户 ID');
+                return;
+            }
+
+            try {
+                const response = await axios.put(`${API_BASE_URL}/api/customers/${customerId}`, {
+                    email,
+                    name
+                });
+
+                showResult('updateResult', 'updateResultContent', response.data);
+            } catch (error) {
+                showError('updateResult', 'updateResultContent', error);
+            }
+        }
+
+        function showResult(panelId, contentId, data) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = JSON.stringify(data, null, 2);
+            panel.style.display = 'block';
+        }
+
+        function showError(panelId, contentId, error) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = `错误: ${error.response?.data?.error || error.message}`;
+            content.style.color = '#ef4444';
+            panel.style.display = 'block';
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '已复制！';
+                setTimeout(() => {
+                    button.textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadConfig);
+    </script>
+</body>
+</html>

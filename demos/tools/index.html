@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开发工具演示 - CLI & 测试方法</title>
+    <link rel="stylesheet" href="../../css/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>开发工具演示</h1>
+            <p class="demo-subtitle">学习使用 Stripe CLI 和测试方法</p>
+        </header>
+
+        <div class="demo-content">
+            <section class="demo-section">
+                <h2>1. Stripe CLI 命令</h2>
+                <p>常用的 Stripe CLI 命令和用法：</p>
+
+                <div class="cli-commands">
+                    <div class="cli-command">
+                        <h3>登录</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>登录到 Stripe 账户</span>
+                                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>stripe login</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="cli-command">
+                        <h3>转发 Webhook</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>转发 Webhook 到本地服务器</span>
+                                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>stripe listen --forward-to localhost:3000/webhook</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="cli-command">
+                        <h3>触发测试事件</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>触发 payment_intent.succeeded 事件</span>
+                                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>stripe trigger payment_intent.succeeded</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="cli-command">
+                        <h3>创建测试资源</h3>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>创建测试客户</span>
+                                <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>stripe fixtures customers create</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>2. 测试卡号</h2>
+                <p>使用测试卡号模拟不同的支付场景：</p>
+
+                <div class="test-cards">
+                    <div class="test-card">
+                        <div class="card-icon">✅</div>
+                        <h3>成功支付</h3>
+                        <div class="card-number">4242 4242 4242 4242</div>
+                        <p>用于测试成功的支付流程</p>
+                        <button class="btn btn-success" onclick="testCard('4242424242424242')">测试此卡</button>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="card-icon">❌</div>
+                        <h3>支付失败</h3>
+                        <div class="card-number">4000 0000 0000 0002</div>
+                        <p>用于测试支付失败场景</p>
+                        <button class="btn btn-danger" onclick="testCard('4000000000000002')">测试此卡</button>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="card-icon">🔐</div>
+                        <h3>需要 3D 验证</h3>
+                        <div class="card-number">4000 0025 0000 3155</div>
+                        <p>用于测试 3D Secure 验证流程</p>
+                        <button class="btn btn-warning" onclick="testCard('4000002500003155')">测试此卡</button>
+                    </div>
+
+                    <div class="test-card">
+                        <div class="card-icon">💳</div>
+                        <h3>余额不足</h3>
+                        <div class="card-number">4000 0000 0000 9995</div>
+                        <p>用于测试余额不足场景</p>
+                        <button class="btn btn-danger" onclick="testCard('4000000000009995')">测试此卡</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>3. 测试支付流程</h2>
+                <p>使用测试卡进行完整的支付测试：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="testAmount">支付金额（元）</label>
+                        <input type="number" id="testAmount" value="100" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="testCardNumber">测试卡号</label>
+                        <input type="text" id="testCardNumber" placeholder="4242 4242 4242 4242" maxlength="19">
+                    </div>
+                    <div class="form-group">
+                        <label for="testExpiry">过期日期</label>
+                        <input type="text" id="testExpiry" placeholder="12/34" maxlength="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="testCvc">CVC</label>
+                        <input type="text" id="testCvc" placeholder="123" maxlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="testZip">邮政编码</label>
+                        <input type="text" id="testZip" placeholder="12345" maxlength="5">
+                    </div>
+                    <button class="btn btn-primary" onclick="testPayment()">测试支付</button>
+                </div>
+
+                <div class="result-panel" id="testPaymentResult" style="display: none;">
+                    <h3>测试结果</h3>
+                    <div id="testPaymentContent"></div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>4. 常见问题排查</h2>
+                <p>常见错误和解决方案：</p>
+
+                <div class="troubleshooting">
+                    <div class="troubleshoot-item">
+                        <h3>API 密钥错误</h3>
+                        <p><strong>错误信息：</strong>Invalid API Key provided</p>
+                        <p><strong>原因：</strong>使用了错误的 API 密钥或密钥格式不正确</p>
+                        <p><strong>解决方案：</strong></p>
+                        <ul>
+                            <li>检查是否使用了正确的密钥（测试密钥 vs 生产密钥）</li>
+                            <li>确认密钥格式正确（pk_test_... 或 sk_test_...）</li>
+                            <li>重新复制密钥并更新配置</li>
+                        </ul>
+                    </div>
+
+                    <div class="troubleshoot-item">
+                        <h3>Webhook 签名验证失败</h3>
+                        <p><strong>错误信息：</strong>Signature verification failed</p>
+                        <p><strong>原因：</strong>Webhook 签名密钥不正确或签名验证逻辑有误</p>
+                        <p><strong>解决方案：</strong></p>
+                        <ul>
+                            <li>确认使用了正确的 Webhook 签名密钥</li>
+                            <li>检查签名验证代码是否正确</li>
+                            <li>确保正确处理时间戳</li>
+                        </ul>
+                    </div>
+
+                    <div class="troubleshoot-item">
+                        <h3>支付失败</h3>
+                        <p><strong>错误信息：</strong>Your card was declined</p>
+                        <p><strong>原因：</strong>卡片被拒绝或存在其他问题</p>
+                        <p><strong>解决方案：</strong></p>
+                        <ul>
+                            <li>检查卡片信息是否正确</li>
+                            <li>确认卡片有足够余额</li>
+                            <li>检查是否需要 3D 验证</li>
+                            <li>联系发卡银行了解更多信息</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>5. 最佳实践</h2>
+                <p>Stripe 开发的最佳实践和建议：</p>
+
+                <div class="best-practices">
+                    <div class="practice-item">
+                        <h3>🔒 安全实践</h3>
+                        <ul>
+                            <li>永远不要在前端代码中使用秘密密钥</li>
+                            <li>始终验证 Webhook 签名</li>
+                            <li>使用 HTTPS 进行所有通信</li>
+                            <li>定期轮换 API 密钥</li>
+                            <li>实现适当的错误处理</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-item">
+                        <h3>⚡ 性能优化</h3>
+                        <ul>
+                            <li>使用异步处理避免阻塞</li>
+                            <li>缓存频繁访问的数据</li>
+                            <li>使用批量 API 减少请求次数</li>
+                            <li>实现重试逻辑处理临时性错误</li>
+                        </ul>
+                    </div>
+
+                    <div class="practice-item">
+                        <h3>📊 监控和日志</h3>
+                        <ul>
+                            <li>记录所有 API 调用和响应</li>
+                            <li>监控错误率和性能指标</li>
+                            <li>设置告警通知</li>
+                            <li>定期审查日志和错误</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="demo-footer">
+            <a href="../../index.html" class="btn btn-secondary">返回教程</a>
+            <a href="../../demos.html" class="btn btn-secondary">查看所有演示</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        function copyCode(button) {
+            const codeBlock = button.parentElement.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '已复制！';
+                setTimeout(() => {
+                    button.textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        function testCard(cardNumber) {
+            document.getElementById('testCardNumber').value = cardNumber;
+            document.getElementById('testExpiry').value = '12/34';
+            document.getElementById('testCvc').value = '123';
+            document.getElementById('testZip').value = '12345';
+        }
+
+        async function testPayment() {
+            const amount = document.getElementById('testAmount').value;
+            const cardNumber = document.getElementById('testCardNumber').value;
+            const expiry = document.getElementById('testExpiry').value;
+            const cvc = document.getElementById('testCvc').value;
+            const zip = document.getElementById('testZip').value;
+
+            if (!cardNumber || !expiry || !cvc) {
+                alert('请填写所有必填字段');
+                return;
+            }
+
+            const contentDiv = document.getElementById('testPaymentContent');
+            contentDiv.innerHTML = '<p class="processing">正在测试支付...</p>';
+            document.getElementById('testPaymentResult').style.display = 'block';
+
+            try {
+                const response = await fetch('/api/test-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: Math.round(amount * 100),
+                        card_number: cardNumber.replace(/\s/g, ''),
+                        card_exp_month: expiry.split('/')[0],
+                        card_exp_year: '20' + expiry.split('/')[1],
+                        card_cvc: cvc,
+                        card_zip: zip
+                    })
+                });
+                const data = await response.json();
+                
+                contentDiv.innerHTML = `
+                    <div class="test-result ${data.success ? 'success' : 'error'}">
+                        <h4>${data.success ? '✅ 支付成功' : '❌ 支付失败'}</h4>
+                        <p><strong>Payment Intent ID：</strong> ${data.paymentIntentId || 'N/A'}</p>
+                        <p><strong>状态：</strong> ${data.status}</p>
+                        <p><strong>消息：</strong> ${data.message}</p>
+                        ${data.testCardInfo ? `
+                            <div class="test-card-info">
+                                <h5>测试卡信息：</h5>
+                                <p><strong>类型：</strong> ${data.testCardInfo.type}</p>
+                                <p><strong>品牌：</strong> ${data.testCardInfo.brand}</p>
+                                <p><strong>国家：</strong> ${data.testCardInfo.country}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (error) {
+                contentDiv.innerHTML = `
+                    <div class="test-result error">
+                        <h4>❌ 测试失败</h4>
+                        <p><strong>错误：</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

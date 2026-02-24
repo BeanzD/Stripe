@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe 教程 - 从入门到精通</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#635BFF"/>
+                    <path d="M12 20h16M12 14h10M12 26h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>Stripe 教程</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#getting-started" class="nav-link">入门指南</a>
+                <a href="#payments" class="nav-link">支付教程</a>
+                <a href="#subscriptions" class="nav-link">订阅教程</a>
+                <a href="#advanced" class="nav-link">高级功能</a>
+                <a href="#tools" class="nav-link">开发工具</a>
+                <a href="demos.html" class="nav-link btn-demo">演示</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Stripe 教程</h1>
+            <p class="hero-subtitle">从零开始学习 Stripe，掌握在线支付的完整解决方案</p>
+            <div class="hero-buttons">
+                <a href="#getting-started" class="btn btn-primary">开始学习</a>
+                <a href="demos.html" class="btn btn-warning">查看演示</a>
+                <a href="https://stripe.com/docs" target="_blank" class="btn btn-secondary">官方文档</a>
+            </div>
+        </div>
+        <div class="hero-features">
+            <div class="feature-card">
+                <div class="feature-icon">💳</div>
+                <h3>支付处理</h3>
+                <p>支持130+种货币和多种支付方式</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔄</div>
+                <h3>订阅管理</h3>
+                <p>灵活的订阅和计费解决方案</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>安全可靠</h3>
+                <p>PCI DSS Level 1 认证的安全保障</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="getting-started" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">第一章</span>
+                    <h2>入门指南</h2>
+                    <p class="section-description">了解 Stripe 基础概念，配置开发环境</p>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card" data-tutorial="introduction">
+                        <div class="tutorial-number">1.1</div>
+                        <h3>Stripe 简介</h3>
+                        <p>了解 Stripe 是什么，它能做什么，以及为什么选择 Stripe</p>
+                        <ul class="tutorial-topics">
+                            <li>Stripe 的核心功能</li>
+                            <li>应用场景</li>
+                            <li>与其他支付平台的比较</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('introduction')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="api-keys">
+                        <div class="tutorial-number">1.2</div>
+                        <h3>API 密钥配置</h3>
+                        <p>获取和配置 Stripe API 密钥，区分测试环境和生产环境</p>
+                        <ul class="tutorial-topics">
+                            <li>获取 API 密钥</li>
+                            <li>测试密钥 vs 生产密钥</li>
+                            <li>安全最佳实践</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('api-keys')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="environment">
+                        <div class="tutorial-number">1.3</div>
+                        <h3>开发环境设置</h3>
+                        <p>安装 Stripe CLI，配置开发环境，准备开始开发</p>
+                        <ul class="tutorial-topics">
+                            <li>安装 Stripe CLI</li>
+                            <li>配置 Webhook</li>
+                            <li>本地开发流程</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('environment')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="sdk">
+                        <div class="tutorial-number">1.4</div>
+                        <h3>SDK 使用</h3>
+                        <p>学习使用 Stripe 的服务器端 SDK 进行 API 调用</p>
+                        <ul class="tutorial-topics">
+                            <li>安装 SDK</li>
+                            <li>基本 API 调用</li>
+                            <li>错误处理</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('sdk')">开始学习</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="payments" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">第二章</span>
+                    <h2>支付教程</h2>
+                    <p class="section-description">学习如何处理一次性支付，集成支付方式</p>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card" data-tutorial="payment-intent">
+                        <div class="tutorial-number">2.1</div>
+                        <h3>Payment Intent</h3>
+                        <p>理解 Payment Intent 的概念，创建和管理支付意图</p>
+                        <ul class="tutorial-topics">
+                            <li>Payment Intent 基础</li>
+                            <li>创建支付意图</li>
+                            <li>确认支付</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('payment-intent')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="stripe-elements">
+                        <div class="tutorial-number">2.2</div>
+                        <h3>Stripe Elements</h3>
+                        <p>使用 Stripe Elements 构建自定义支付表单</p>
+                        <ul class="tutorial-topics">
+                            <li>Elements 简介</li>
+                            <li>集成 Card Element</li>
+                            <li>自定义样式</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('stripe-elements')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="payment-methods">
+                        <div class="tutorial-number">2.3</div>
+                        <h3>支付方式</h3>
+                        <p>支持多种支付方式：信用卡、支付宝、微信支付等</p>
+                        <ul class="tutorial-topics">
+                            <li>支持的支付方式</li>
+                            <li>添加支付方式</li>
+                            <li>保存支付方式</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('payment-methods')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="checkout">
+                        <div class="tutorial-number">2.4</div>
+                        <h3>Stripe Checkout</h3>
+                        <p>使用 Stripe Checkout 快速实现托管支付页面</p>
+                        <ul class="tutorial-topics">
+                            <li>Checkout 简介</li>
+                            <li>创建 Checkout Session</li>
+                            <li>自定义 Checkout</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('checkout')">开始学习</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="subscriptions" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">第三章</span>
+                    <h2>订阅教程</h2>
+                    <p class="section-description">构建和管理订阅系统，处理账单和发票</p>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card" data-tutorial="products-prices">
+                        <div class="tutorial-number">3.1</div>
+                        <h3>产品和价格</h3>
+                        <p>创建产品和价格对象，定义订阅计划</p>
+                        <ul class="tutorial-topics">
+                            <li>创建产品</li>
+                            <li>定义价格</li>
+                            <li>管理订阅计划</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('products-prices')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="create-subscription">
+                        <div class="tutorial-number">3.2</div>
+                        <h3>创建订阅</h3>
+                        <p>为用户创建订阅，设置计费周期和试用期</p>
+                        <ul class="tutorial-topics">
+                            <li>创建订阅</li>
+                            <li>设置试用期</li>
+                            <li>订阅状态管理</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('create-subscription')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="manage-subscription">
+                        <div class="tutorial-number">3.3</div>
+                        <h3>管理订阅</h3>
+                        <p>更新、暂停、取消订阅，处理订阅变更</p>
+                        <ul class="tutorial-topics">
+                            <li>更新订阅</li>
+                            <li>暂停和恢复</li>
+                            <li>取消订阅</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('manage-subscription')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="prorations">
+                        <div class="tutorial-number">3.4</div>
+                        <h3>按比例计费</h3>
+                        <p>理解按比例计费机制，处理订阅升级和降级</p>
+                        <ul class="tutorial-topics">
+                            <li>按比例计费原理</li>
+                            <li>预览计费</li>
+                            <li>自定义计费规则</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('prorations')">开始学习</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="advanced" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">第四章</span>
+                    <h2>高级功能</h2>
+                    <p class="section-description">掌握 Webhooks、Connect 平台等高级特性</p>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card" data-tutorial="webhooks">
+                        <div class="tutorial-number">4.1</div>
+                        <h3>Webhooks</h3>
+                        <p>设置和使用 Webhooks，处理 Stripe 事件通知</p>
+                        <ul class="tutorial-topics">
+                            <li>Webhook 基础</li>
+                            <li>配置 Webhook</li>
+                            <li>验证签名</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('webhooks')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="connect">
+                        <div class="tutorial-number">4.2</div>
+                        <h3>Connect 平台</h3>
+                        <p>构建多租户平台，管理子账户和资金分配</p>
+                        <ul class="tutorial-topics">
+                            <li>Connect 概念</li>
+                            <li>创建 Connected Account</li>
+                            <li>资金分配</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('connect')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="radar">
+                        <div class="tutorial-number">4.3</div>
+                        <h3>风险评估</h3>
+                        <p>使用 Radar 进行欺诈检测和风险管理</p>
+                        <ul class="tutorial-topics">
+                            <li>Radar 简介</li>
+                            <li>风险评估规则</li>
+                            <li>欺诈预防</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('radar')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="identity">
+                        <div class="tutorial-number">4.4</div>
+                        <h3>身份验证</h3>
+                        <p>使用 Identity 验证用户身份文件</p>
+                        <ul class="tutorial-topics">
+                            <li>Identity 简介</li>
+                            <li>验证流程</li>
+                            <li>集成示例</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('identity')">开始学习</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="tools" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">第五章</span>
+                    <h2>开发工具</h2>
+                    <p class="section-description">掌握 CLI 工具、测试方法和最佳实践</p>
+                </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card" data-tutorial="stripe-cli">
+                        <div class="tutorial-number">5.1</div>
+                        <h3>Stripe CLI</h3>
+                        <p>使用命令行工具进行开发和调试</p>
+                        <ul class="tutorial-topics">
+                            <li>CLI 安装</li>
+                            <li>常用命令</li>
+                            <li>Webhook 转发</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('stripe-cli')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="testing">
+                        <div class="tutorial-number">5.2</div>
+                        <h3>测试方法</h3>
+                        <p>使用测试卡和测试数据进行集成测试</p>
+                        <ul class="tutorial-topics">
+                            <li>测试卡号</li>
+                            <li>模拟支付结果</li>
+                            <li>测试 Webhook</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('testing')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="best-practices">
+                        <div class="tutorial-number">5.3</div>
+                        <h3>最佳实践</h3>
+                        <p>学习 Stripe 开发的最佳实践和安全建议</p>
+                        <ul class="tutorial-topics">
+                            <li>安全实践</li>
+                            <li>性能优化</li>
+                            <li>错误处理</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('best-practices')">开始学习</button>
+                    </div>
+
+                    <div class="tutorial-card" data-tutorial="troubleshooting">
+                        <div class="tutorial-number">5.4</div>
+                        <h3>故障排查</h3>
+                        <p>常见问题解决方案和调试技巧</p>
+                        <ul class="tutorial-topics">
+                            <li>常见错误</li>
+                            <li>调试技巧</li>
+                            <li>获取帮助</li>
+                        </ul>
+                        <button class="btn btn-learn" onclick="openTutorial('troubleshooting')">开始学习</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="interview-mindmap" class="section section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">面试必备</span>
+                    <h2>面试思维导图</h2>
+                    <p class="section-description">完整的 Stripe 面试知识体系，助你轻松应对技术面试</p>
+                </div>
+                
+                <div class="mindmap-container">
+                    <div class="mindmap-visual">
+                        <iframe src="markmap.svg" class="mindmap-iframe" frameborder="0"></iframe>
+                    </div>
+                    
+                    <div class="mindmap-actions">
+                        <a href="stripe-interview-mindmap.md" target="_blank" class="btn btn-primary">
+                            <span class="btn-icon">📄</span>
+                            查看完整思维导图
+                        </a>
+                        <button class="btn btn-secondary" onclick="copyMindmap()">
+                            <span class="btn-icon">📋</span>
+                            复制思维导图链接
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="tutorial-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Stripe 教程</h4>
+                    <p>从入门到精通的完整学习指南</p>
+                </div>
+                <div class="footer-section">
+                    <h4>相关链接</h4>
+                    <ul>
+                        <li><a href="https://stripe.com/docs" target="_blank">Stripe 官方文档</a></li>
+                        <li><a href="https://stripe.com/api" target="_blank">API 参考</a></li>
+                        <li><a href="https://github.com/stripe" target="_blank">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>支持</h4>
+                    <ul>
+                        <li><a href="https://support.stripe.com/" target="_blank">帮助中心</a></li>
+                        <li><a href="https://discord.gg/stripe" target="_blank">Discord 社区</a></li>
+                        <li><a href="https://twitter.com/stripe" target="_blank">Twitter</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Stripe 教程. 本教程仅供学习使用，Stripe 是 Stripe, Inc. 的注册商标。</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-ruby.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="js/tutorials.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付教程演示 - Payment Intent & Elements</title>
+    <link rel="stylesheet" href="../../css/demo.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>支付教程演示</h1>
+            <p class="demo-subtitle">学习如何使用 Payment Intent 和 Stripe Elements 处理支付</p>
+        </header>
+
+        <div class="demo-content">
+            <section class="demo-section">
+                <h2>1. 创建 Payment Intent</h2>
+                <p>在服务器端创建一个支付意图，用于跟踪支付流程：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="paymentAmount">支付金额（元）</label>
+                        <input type="number" id="paymentAmount" value="100" min="1" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentCurrency">货币</label>
+                        <select id="paymentCurrency">
+                            <option value="cny">人民币 (CNY)</option>
+                            <option value="usd">美元 (USD)</option>
+                            <option value="eur">欧元 (EUR)</option>
+                            <option value="jpy">日元 (JPY)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentDescription">支付描述</label>
+                        <input type="text" id="paymentDescription" placeholder="商品购买">
+                    </div>
+                    <button class="btn btn-primary" onclick="createPaymentIntent()">创建支付意图</button>
+                </div>
+
+                <div class="result-panel" id="paymentIntentResult" style="display: none;">
+                    <h3>Payment Intent 创建结果</h3>
+                    <pre id="paymentIntentContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>2. Stripe Elements 支付表单</h2>
+                <p>使用 Stripe Elements 创建安全的支付表单：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="cardholderName">持卡人姓名</label>
+                        <input type="text" id="cardholderName" placeholder="张三">
+                    </div>
+                    <div class="form-group">
+                        <label for="cardholderEmail">持卡人邮箱</label>
+                        <input type="email" id="cardholderEmail" placeholder="zhangsan@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="card-element">信用卡信息</label>
+                        <div id="card-element" class="stripe-element"></div>
+                        <div id="card-errors" class="card-errors" role="alert"></div>
+                    </div>
+                    <button class="btn btn-success" id="submit-payment" onclick="submitPayment()">确认支付</button>
+                    <div id="payment-status" class="payment-status"></div>
+                </div>
+
+                <div class="info-panel">
+                    <h3>测试卡号</h3>
+                    <p>使用以下测试卡号进行测试：</p>
+                    <ul>
+                        <li><strong>成功支付</strong>：4242 4242 4242 4242</li>
+                        <li><strong>支付失败</strong>：4000 0000 0000 0002</li>
+                        <li><strong>需要 3D 验证</strong>：4000 0025 0000 3155</li>
+                        <li><strong>余额不足</strong>：4000 0000 0000 9995</li>
+                    </ul>
+                    <p><small>过期日期：任何未来日期（如 12/34）</small></p>
+                    <p><small>CVC：任何三位数字（如 123）</small></p>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>3. 支付状态</h2>
+                <p>查看支付状态和历史记录：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="paymentIntentId">Payment Intent ID</label>
+                        <input type="text" id="paymentIntentId" placeholder="pi_xxx">
+                    </div>
+                    <button class="btn btn-info" onclick="retrievePaymentIntent()">查询支付状态</button>
+                </div>
+
+                <div class="result-panel" id="paymentStatusResult" style="display: none;">
+                    <h3>支付状态</h3>
+                    <div id="paymentStatusContent"></div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>4. 保存支付方式</h2>
+                <p>将支付方式保存到客户账户，以便将来使用：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="saveCustomerId">客户 ID</label>
+                        <input type="text" id="saveCustomerId" placeholder="cus_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="saveCardholderName">持卡人姓名</label>
+                        <input type="text" id="saveCardholderName" placeholder="张三">
+                    </div>
+                    <div class="form-group">
+                        <label for="save-card-element">信用卡信息</label>
+                        <div id="save-card-element" class="stripe-element"></div>
+                        <div id="save-card-errors" class="card-errors" role="alert"></div>
+                    </div>
+                    <button class="btn btn-warning" onclick="savePaymentMethod()">保存支付方式</button>
+                </div>
+
+                <div class="result-panel" id="savePaymentMethodResult" style="display: none;">
+                    <h3>保存结果</h3>
+                    <pre id="savePaymentMethodContent"></pre>
+                </div>
+            </section>
+        </div>
+
+        <div class="demo-footer">
+            <a href="../../index.html" class="btn btn-secondary">返回教程</a>
+            <a href="../../demos.html" class="btn btn-secondary">查看所有演示</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        let stripe;
+        let cardElement;
+        let saveCardElement;
+        let clientSecret;
+        let currentPaymentIntentId;
+
+        async function initStripe() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/config`);
+                const config = await response.json();
+                stripe = Stripe(config.publishableKey);
+            } catch (error) {
+                console.error('获取 Stripe 配置失败:', error);
+                alert('无法获取 Stripe 配置，请检查服务器是否正常运行');
+                return;
+            }
+            
+            const elements = stripe.elements();
+            
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#32325d',
+                        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a'
+                    }
+                }
+            });
+            cardElement.mount('#card-element');
+
+            cardElement.on('change', (event) => {
+                const displayError = document.getElementById('card-errors');
+                displayError.textContent = event.error ? event.error.message : '';
+            });
+
+            const saveElements = stripe.elements();
+            saveCardElement = saveElements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#32325d'
+                    }
+                }
+            });
+            saveCardElement.mount('#save-card-element');
+
+            saveCardElement.on('change', (event) => {
+                const displayError = document.getElementById('save-card-errors');
+                displayError.textContent = event.error ? event.error.message : '';
+            });
+            
+            console.log('Stripe 初始化完成');
+        }
+
+        async function createPaymentIntent() {
+            const amount = document.getElementById('paymentAmount').value;
+            const currency = document.getElementById('paymentCurrency').value;
+            const description = document.getElementById('paymentDescription').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/create-payment-intent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, currency, description })
+                });
+                const data = await response.json();
+                
+                clientSecret = data.client_secret;
+                currentPaymentIntentId = data.id;
+                document.getElementById('paymentIntentId').value = data.id;
+                
+                console.log('Payment Intent 创建成功:', data);
+                console.log('Client Secret:', clientSecret);
+                
+                showResult('paymentIntentResult', 'paymentIntentContent', data);
+                alert('Payment Intent 创建成功！现在可以进行支付。');
+            } catch (error) {
+                console.error('创建 Payment Intent 失败:', error);
+                showError('paymentIntentResult', 'paymentIntentContent', error);
+            }
+        }
+
+        async function submitPayment() {
+            const name = document.getElementById('cardholderName').value;
+            const email = document.getElementById('cardholderEmail').value;
+            const submitButton = document.getElementById('submit-payment');
+            const statusDiv = document.getElementById('payment-status');
+
+            console.log('提交支付，Client Secret:', clientSecret);
+            console.log('当前 Payment Intent ID:', currentPaymentIntentId);
+
+            if (!clientSecret) {
+                alert('请先创建 Payment Intent\n\n点击上方的"创建支付意图"按钮来创建 Payment Intent');
+                return;
+            }
+
+            submitButton.disabled = true;
+            statusDiv.innerHTML = '<p class="processing">正在处理支付...</p>';
+
+            try {
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: name,
+                            email: email
+                        }
+                    }
+                });
+
+                if (error) {
+                    console.error('支付失败:', error);
+                    statusDiv.innerHTML = `<p class="error">支付失败：${error.message}</p>`;
+                } else {
+                    console.log('支付成功:', paymentIntent);
+                    statusDiv.innerHTML = `<p class="success">支付成功！Payment Intent ID: ${paymentIntent.id}</p>`;
+                    document.getElementById('paymentIntentId').value = paymentIntent.id;
+                    currentPaymentIntentId = paymentIntent.id;
+                }
+            } catch (error) {
+                console.error('支付异常:', error);
+                statusDiv.innerHTML = `<p class="error">支付失败：${error.message}</p>`;
+            }
+
+            submitButton.disabled = false;
+        }
+
+        async function retrievePaymentIntent() {
+            const paymentIntentId = document.getElementById('paymentIntentId').value;
+
+            if (!paymentIntentId) {
+                alert('请输入 Payment Intent ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/payment-intents/${paymentIntentId}`);
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('paymentStatusContent');
+                statusDiv.innerHTML = `
+                    <div class="status-item">
+                        <strong>状态：</strong>
+                        <span class="status-badge status-${data.status}">${data.status}</span>
+                    </div>
+                    <div class="status-item">
+                        <strong>金额：</strong>
+                        <span>${(data.amount / 100).toFixed(2)} ${data.currency.toUpperCase()}</span>
+                    </div>
+                    <div class="status-item">
+                        <strong>创建时间：</strong>
+                        <span>${new Date(data.created * 1000).toLocaleString()}</span>
+                    </div>
+                    <div class="status-item">
+                        <strong>描述：</strong>
+                        <span>${data.description || '无'}</span>
+                    </div>
+                `;
+                
+                document.getElementById('paymentStatusResult').style.display = 'block';
+            } catch (error) {
+                showError('paymentStatusResult', 'paymentStatusContent', error);
+            }
+        }
+
+        async function savePaymentMethod() {
+            const customerId = document.getElementById('saveCustomerId').value;
+            const name = document.getElementById('saveCardholderName').value;
+
+            if (!customerId) {
+                alert('请输入客户 ID');
+                return;
+            }
+
+            try {
+                const { error, paymentMethod } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: saveCardElement,
+                    billing_details: {
+                        name: name
+                    }
+                });
+
+                if (error) {
+                    alert('创建支付方式失败：' + error.message);
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/payment-methods`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentMethodId: paymentMethod.id,
+                        customerId: customerId
+                    })
+                });
+                const data = await response.json();
+                
+                showResult('savePaymentMethodResult', 'savePaymentMethodContent', data);
+            } catch (error) {
+                showError('savePaymentMethodResult', 'savePaymentMethodContent', error);
+            }
+        }
+
+        function showResult(panelId, contentId, data) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = JSON.stringify(data, null, 2);
+            content.style.color = '#f8f8f2';
+            panel.style.display = 'block';
+        }
+
+        function showError(panelId, contentId, error) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = `错误: ${error.message}`;
+            content.style.color = '#ef4444';
+            panel.style.display = 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', initStripe);
+    </script>
+</body>
+</html>

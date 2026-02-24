@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级功能演示 - Webhooks & Connect</title>
+    <link rel="stylesheet" href="../../css/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>高级功能演示</h1>
+            <p class="demo-subtitle">学习 Webhooks、Connect 平台和风险评估</p>
+        </header>
+
+        <div class="demo-content">
+            <section class="demo-section">
+                <h2>1. Webhook 配置</h2>
+                <p>配置和管理 Webhook 端点，接收 Stripe 事件通知：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="webhookUrl">Webhook URL</label>
+                        <input type="url" id="webhookUrl" placeholder="https://your-website.com/webhook">
+                    </div>
+                    <div class="form-group">
+                        <label for="webhookEvents">选择事件</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="payment_intent.succeeded" checked> payment_intent.succeeded</label>
+                            <label><input type="checkbox" value="payment_intent.failed"> payment_intent.failed</label>
+                            <label><input type="checkbox" value="customer.subscription.created" checked> customer.subscription.created</label>
+                            <label><input type="checkbox" value="customer.subscription.updated"> customer.subscription.updated</label>
+                            <label><input type="checkbox" value="invoice.paid" checked> invoice.paid</label>
+                            <label><input type="checkbox" value="invoice.payment_failed"> invoice.payment_failed</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="configureWebhook()">配置 Webhook</button>
+                </div>
+
+                <div class="result-panel" id="webhookResult" style="display: none;">
+                    <h3>Webhook 配置结果</h3>
+                    <pre id="webhookResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>2. Webhook 事件历史</h2>
+                <p>查看和测试 Webhook 事件：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="eventType">事件类型</label>
+                        <select id="eventType">
+                            <option value="">-- 选择事件 --</option>
+                            <option value="payment_intent.succeeded">payment_intent.succeeded</option>
+                            <option value="payment_intent.failed">payment_intent.failed</option>
+                            <option value="customer.subscription.created">customer.subscription.created</option>
+                            <option value="invoice.paid">invoice.paid</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-info" onclick="triggerWebhookEvent()">触发测试事件</button>
+                        <button class="btn btn-warning" onclick="viewWebhookEvents()">查看事件历史</button>
+                    </div>
+                </div>
+
+                <div class="result-panel" id="webhookEventsResult" style="display: none;">
+                    <h3>Webhook 事件</h3>
+                    <div id="webhookEventsContent"></div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>3. Connect 账户</h2>
+                <p>创建和管理 Connected Account（子账户）：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="accountType">账户类型</label>
+                        <select id="accountType">
+                            <option value="express">Express（推荐）</option>
+                            <option value="standard">Standard</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountEmail">账户邮箱</label>
+                        <input type="email" id="accountEmail" placeholder="merchant@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="accountCountry">国家/地区</label>
+                        <select id="accountCountry">
+                            <option value="CN">中国</option>
+                            <option value="US">美国</option>
+                            <option value="JP">日本</option>
+                            <option value="GB">英国</option>
+                            <option value="DE">德国</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success" onclick="createConnectedAccount()">创建 Connected Account</button>
+                </div>
+
+                <div class="result-panel" id="accountResult" style="display: none;">
+                    <h3>账户创建结果</h3>
+                    <pre id="accountResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>4. 账户链接</h2>
+                <p>创建账户链接，让商家完成入驻流程：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="linkAccountId">账户 ID</label>
+                        <input type="text" id="linkAccountId" placeholder="acct_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkType">链接类型</label>
+                        <select id="linkType">
+                            <option value="account_onboarding">入驻流程</option>
+                            <option value="account_update">更新账户信息</option>
+                            <option value="account_onboarding_update">更新入驻信息</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-info" onclick="createAccountLink()">创建账户链接</button>
+                </div>
+
+                <div class="result-panel" id="accountLinkResult" style="display: none;">
+                    <h3>账户链接结果</h3>
+                    <div id="accountLinkContent"></div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>5. 资金分配</h2>
+                <p>创建支付并分配资金到子账户：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="transferAmount">支付金额（元）</label>
+                        <input type="number" id="transferAmount" value="100" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="transferCurrency">货币</label>
+                        <select id="transferCurrency">
+                            <option value="cny">人民币 (CNY)</option>
+                            <option value="usd">美元 (USD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="destinationAccountId">目标账户 ID</label>
+                        <input type="text" id="destinationAccountId" placeholder="acct_xxx">
+                    </div>
+                    <div class="form-group">
+                        <label for="platformFee">平台费用（元）</label>
+                        <input type="number" id="platformFee" value="10" min="0">
+                    </div>
+                    <button class="btn btn-warning" onclick="createTransferPayment()">创建支付并分配资金</button>
+                </div>
+
+                <div class="result-panel" id="transferResult" style="display: none;">
+                    <h3>支付创建结果</h3>
+                    <pre id="transferResultContent"></pre>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>6. 风险评估</h2>
+                <p>查看支付的风险评估和欺诈检测：</p>
+
+                <div class="demo-panel">
+                    <div class="form-group">
+                        <label for="riskPaymentIntentId">Payment Intent ID</label>
+                        <input type="text" id="riskPaymentIntentId" placeholder="pi_xxx">
+                    </div>
+                    <button class="btn btn-secondary" onclick="checkRiskAssessment()">检查风险评估</button>
+                </div>
+
+                <div class="result-panel" id="riskResult" style="display: none;">
+                    <h3>风险评估结果</h3>
+                    <div id="riskResultContent"></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="demo-footer">
+            <a href="../../index.html" class="btn btn-secondary">返回教程</a>
+            <a href="../../demos.html" class="btn btn-secondary">查看所有演示</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3001';
+        
+        async function configureWebhook() {
+            const url = document.getElementById('webhookUrl').value;
+            const events = Array.from(document.querySelectorAll('#webhookEvents input:checked'))
+                .map(cb => cb.value);
+
+            if (!url) {
+                alert('请输入 Webhook URL');
+                return;
+            }
+
+            if (events.length === 0) {
+                alert('请至少选择一个事件');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/webhooks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, events })
+                });
+                const data = await response.json();
+                
+                showResult('webhookResult', 'webhookResultContent', data);
+            } catch (error) {
+                showError('webhookResult', 'webhookResultContent', error);
+            }
+        }
+
+        async function triggerWebhookEvent() {
+            const eventType = document.getElementById('eventType').value;
+
+            if (!eventType) {
+                alert('请选择事件类型');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/webhooks/trigger`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: eventType })
+                });
+                const data = await response.json();
+                
+                const contentDiv = document.getElementById('webhookEventsContent');
+                contentDiv.innerHTML = `
+                    <div class="webhook-event">
+                        <strong>事件类型：</strong> ${data.type}<br>
+                        <strong>事件 ID：</strong> ${data.id}<br>
+                        <strong>创建时间：</strong> ${new Date(data.created * 1000).toLocaleString()}<br>
+                        <strong>状态：</strong> <span class="status-badge status-success">已触发</span>
+                    </div>
+                `;
+                
+                document.getElementById('webhookEventsResult').style.display = 'block';
+            } catch (error) {
+                showError('webhookEventsResult', 'webhookEventsContent', error);
+            }
+        }
+
+        async function viewWebhookEvents() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/webhooks/events?type=${eventType}`);
+                const data = await response.json();
+                
+                const contentDiv = document.getElementById('webhookEventsContent');
+                if (data.data && data.data.length > 0) {
+                    contentDiv.innerHTML = data.data.map(event => `
+                        <div class="webhook-event">
+                            <strong>事件类型：</strong> ${event.type}<br>
+                            <strong>事件 ID：</strong> ${event.id}<br>
+                            <strong>创建时间：</strong> ${new Date(event.created * 1000).toLocaleString()}<br>
+                            <strong>状态：</strong> <span class="status-badge status-${event.status === 'succeeded' ? 'success' : 'pending'}">${event.status}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    contentDiv.innerHTML = '<p>暂无 Webhook 事件</p>';
+                }
+                
+                document.getElementById('webhookEventsResult').style.display = 'block';
+            } catch (error) {
+                showError('webhookEventsResult', 'webhookEventsContent', error);
+            }
+        }
+
+        async function createConnectedAccount() {
+            const type = document.getElementById('accountType').value;
+            const email = document.getElementById('accountEmail').value;
+            const country = document.getElementById('accountCountry').value;
+
+            if (!email) {
+                alert('请输入账户邮箱');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/connected-accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, email, country })
+                });
+                const data = await response.json();
+                
+                showResult('accountResult', 'accountResultContent', data);
+                document.getElementById('linkAccountId').value = data.id;
+                document.getElementById('destinationAccountId').value = data.id;
+            } catch (error) {
+                showError('accountResult', 'accountResultContent', error);
+            }
+        }
+
+        async function createAccountLink() {
+            const accountId = document.getElementById('linkAccountId').value;
+            const linkType = document.getElementById('linkType').value;
+
+            if (!accountId) {
+                alert('请输入账户 ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/account-links`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account: accountId, type: linkType })
+                });
+                const data = await response.json();
+                
+                const contentDiv = document.getElementById('accountLinkContent');
+                contentDiv.innerHTML = `
+                    <p><strong>账户链接 URL：</strong></p>
+                    <a href="${data.url}" target="_blank" class="btn btn-primary">${data.url}</a>
+                    <p><small>此链接有效期为 30 天</small></p>
+                `;
+                
+                document.getElementById('accountLinkResult').style.display = 'block';
+            } catch (error) {
+                showError('accountLinkResult', 'accountLinkContent', error);
+            }
+        }
+
+        async function createTransferPayment() {
+            const amount = document.getElementById('transferAmount').value;
+            const currency = document.getElementById('transferCurrency').value;
+            const destination = document.getElementById('destinationAccountId').value;
+            const platformFee = document.getElementById('platformFee').value;
+
+            if (!destination) {
+                alert('请输入目标账户 ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/transfers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: Math.round(amount * 100),
+                        currency,
+                        destination,
+                        application_fee_amount: Math.round(platformFee * 100)
+                    })
+                });
+                const data = await response.json();
+                
+                showResult('transferResult', 'transferResultContent', data);
+            } catch (error) {
+                showError('transferResult', 'transferResultContent', error);
+            }
+        }
+
+        async function checkRiskAssessment() {
+            const paymentIntentId = document.getElementById('riskPaymentIntentId').value;
+
+            if (!paymentIntentId) {
+                alert('请输入 Payment Intent ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/risk/evaluate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payment_intent: paymentIntentId })
+                });
+                const data = await response.json();
+                
+                const contentDiv = document.getElementById('riskResultContent');
+                const riskLevel = data.outcome?.risk_level || 'unknown';
+                const riskScore = data.outcome?.risk_score || 0;
+                
+                contentDiv.innerHTML = `
+                    <div class="risk-assessment">
+                        <div class="risk-item">
+                            <strong>风险等级：</strong>
+                            <span class="risk-badge risk-${riskLevel}">${riskLevel}</span>
+                        </div>
+                        <div class="risk-item">
+                            <strong>风险评分：</strong>
+                            <span class="risk-score">${riskScore}/100</span>
+                        </div>
+                        <div class="risk-item">
+                            <strong>网络状态：</strong>
+                            <span>${data.outcome?.network_status || 'N/A'}</span>
+                        </div>
+                        <div class="risk-item">
+                            <strong>建议：</strong>
+                            <span>${getRiskRecommendation(riskLevel)}</span>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('riskResult').style.display = 'block';
+            } catch (error) {
+                showError('riskResult', 'riskResultContent', error);
+            }
+        }
+
+        function getRiskRecommendation(riskLevel) {
+            switch (riskLevel) {
+                case 'normal':
+                    return '交易风险低，可以正常处理';
+                case 'elevated':
+                    return '交易有一定风险，建议进行额外验证';
+                case 'high':
+                    return '交易风险高，建议拒绝交易';
+                default:
+                    return '无法评估风险';
+            }
+        }
+
+        function showResult(panelId, contentId, data) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = JSON.stringify(data, null, 2);
+            content.style.color = '#f8f8f2';
+            panel.style.display = 'block';
+        }
+
+        function showError(panelId, contentId, error) {
+            const panel = document.getElementById(panelId);
+            const content = document.getElementById(contentId);
+            
+            content.textContent = `错误: ${error.message}`;
+            content.style.color = '#ef4444';
+            panel.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
