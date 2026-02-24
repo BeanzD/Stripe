@@ -421,6 +421,14 @@ app.get('/api/config', (req, res) => {
     });
 });
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
+app.get('/demos.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'demos.html'));
+});
+
 module.exports = (req, res) => {
     app(req, res);
 };
