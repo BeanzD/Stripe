@@ -52,7 +52,7 @@ npm start
 
 **在部署之前，必须先在 Vercel 中配置环境变量，否则会报错！**
 
-详细配置步骤请查看 [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+详细配置步骤请查看 [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md)
 
 ### 快速配置步骤
 
@@ -62,44 +62,19 @@ npm start
 
 2. **在 Vercel 中添加环境变量**
    - 进入 Vercel 项目 → Settings → Environment Variables
-   - 添加以下环境变量（选择所有环境：Production, Preview, Development）：
+   - 添加以下环境变量（**必须选择所有环境**：Production, Preview, Development）：
      - `STRIPE_SECRET_KEY`: `sk_test_xxxxxx`
      - `STRIPE_PUBLISHABLE_KEY`: `pk_test_xxxxxx`
 
 3. **重新部署**
    - 配置环境变量后，在 Vercel 中重新部署项目
 
-### 1. 连接 GitHub 仓库
+### 常见问题
 
-将此项目推送到 GitHub 后，在 Vercel 中导入该仓库。
-
-### 2. 配置环境变量（必须！）
-
-在 Vercel 项目设置中添加以下环境变量：
-
-- `STRIPE_SECRET_KEY`: Stripe 密钥（以 `sk_` 开头）
-- `STRIPE_PUBLISHABLE_KEY`: Stripe 可发布密钥（以 `pk_` 开头）
-
-**注意：** 如果不配置这些环境变量，部署会失败或无法正常工作。
-
-### 3. 获取密钥
-
-从 [Stripe Dashboard](https://dashboard.stripe.com/apikeys) 获取 API 密钥：
-- 使用测试密钥进行开发和测试
-- 生产环境请使用实时密钥
-
-### 4. 部署配置
-
-项目已包含 `vercel.json` 配置文件，会自动处理：
-- Node.js 服务器
-- API 路由
-- 静态文件服务
-
-### 5. 常见问题
-
-**错误：`Neither apiKey nor config.authenticator provided`**
-- 原因：未配置 `STRIPE_SECRET_KEY` 环境变量
-- 解决：按照上述步骤在 Vercel 中配置环境变量，然后重新部署
+**错误：访问Vercel应用时报错 `Neither apiKey nor config.authenticator provided`**
+- 原因：未在Vercel中配置 `STRIPE_SECRET_KEY` 环境变量
+- 解决：按照上述步骤在Vercel中配置环境变量，然后重新部署
+- 详细说明：查看 [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md)
 
 **错误：`FUNCTION_INVOCATION_FAILED`**
 - 原因：代码未正确导出为模块或缺少环境变量
