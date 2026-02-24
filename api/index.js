@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 
@@ -13,10 +14,15 @@ console.log('Static files path:', staticPath);
 
 app.use(express.static(staticPath, {
     setHeaders: (res, filePath) => {
-        if (path.extname(filePath) === '.css') {
-            res.setHeader('Content-Type', 'text/css');
-        } else if (path.extname(filePath) === '.js') {
-            res.setHeader('Content-Type', 'application/javascript');
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.css') {
+            res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        } else if (ext === '.js') {
+            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (ext === '.svg') {
+            res.setHeader('Content-Type', 'image/svg+xml');
+        } else if (ext === '.html') {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
         }
     }
 }));
