@@ -7,7 +7,19 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..')));
+
+const staticPath = path.join(__dirname, '..');
+console.log('Static files path:', staticPath);
+
+app.use(express.static(staticPath, {
+    setHeaders: (res, filePath) => {
+        if (path.extname(filePath) === '.css') {
+            res.setHeader('Content-Type', 'text/css');
+        } else if (path.extname(filePath) === '.js') {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 const customers = [];
 const products = [];
@@ -411,3 +423,10 @@ app.get('*', (req, res) => {
 module.exports = (req, res) => {
     app(req, res);
 };
+
+if (require.main === module) {
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
