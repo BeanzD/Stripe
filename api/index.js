@@ -1,12 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const path = require('path');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname + '/..'));
+app.use(express.static(path.join(__dirname, '..')));
 
 const customers = [];
 const products = [];
@@ -404,7 +405,9 @@ app.get('/api/config', (req, res) => {
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(__dirname + '/../index.html');
+    res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-module.exports = app;
+module.exports = (req, res) => {
+    app(req, res);
+};
