@@ -69,12 +69,27 @@ npm start
 3. **重新部署**
    - 配置环境变量后，在 Vercel 中重新部署项目
 
+### 部署架构
+
+项目使用Vercel API Routes部署Express应用：
+
+```
+api/index.js → server.js → 处理所有请求
+```
+
+详细配置说明请查看 [VERCEL_CONFIG.md](./VERCEL_CONFIG.md)
+
 ### 常见问题
 
 **错误：访问Vercel应用时报错 `Neither apiKey nor config.authenticator provided`**
 - 原因：未在Vercel中配置 `STRIPE_SECRET_KEY` 环境变量
 - 解决：按照上述步骤在Vercel中配置环境变量，然后重新部署
 - 详细说明：查看 [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md)
+
+**错误：访问时返回404**
+- 原因：Vercel路由配置问题
+- 解决：确认 `api/index.js` 文件存在，`vercel.json` 配置正确
+- 详细说明：查看 [VERCEL_CONFIG.md](./VERCEL_CONFIG.md)
 
 **错误：`FUNCTION_INVOCATION_FAILED`**
 - 原因：代码未正确导出为模块或缺少环境变量
@@ -83,7 +98,7 @@ npm start
   2. 检查 Vercel 部署日志查看具体错误信息
   3. 确保代码已导出为模块（`module.exports = app`）
 
-详细故障排除请查看 [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+详细故障排除请查看 [VERCEL_CONFIG.md](./VERCEL_CONFIG.md)
 
 ## 项目结构
 
