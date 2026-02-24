@@ -1,30 +1,21 @@
 const express = require('express');
 const cors = require('cors');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const path = require('path');
+
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+if (!stripeSecretKey) {
+    console.error('Warning: STRIPE_SECRET_KEY is not set. API calls requiring Stripe will fail.');
+}
+const stripe = require('stripe')(stripeSecretKey);
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-const staticPath = path.join(__dirname, '..');
-console.log('Static files path:', staticPath);
-
-app.use(express.static(staticPath, {
-    setHeaders: (res, filePath) => {
-        const ext = path.extname(filePath).toLowerCase();
-        if (ext === '.css') {
-            res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        } else if (ext === '.js') {
-            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (ext === '.svg') {
-            res.setHeader('Content-Type', 'image/svg+xml');
-        } else if (ext === '.html') {
-            res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        }
-    }
-}));
+// Remove static file serving for Vercel function as Vercel handles static files
+// const staticPath = path.join(__dirname, '..');
+// app.use(express.static(staticPath, ...));
 
 const customers = [];
 const products = [];
@@ -42,9 +33,7 @@ let paymentIntentIdCounter = 1;
 let accountIdCounter = 1;
 let eventIdCounter = 1;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!'); // 根路径返回内容
-});
+
 
 app.post('/api/customers', async (req, res) => {
     try {
@@ -425,13 +414,7 @@ app.get('/api/config', (req, res) => {
     });
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
 
-app.get('/demos.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'demos.html'));
-});
 
 module.exports = (req, res) => {
     app(req, res);

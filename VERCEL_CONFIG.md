@@ -26,8 +26,9 @@ stripe-tutorial-demos/
    - 导出Express应用实例
 
 3. **vercel.json** - 路由配置
-   - 将所有请求重写到 `/api/index`
-   - 确保Express应用处理所有请求
+   - 静态资源直接由 Vercel 托管
+   - 仅将 `/api/*` 请求重写到 `/api/index.js`
+   - 确保 API 请求由 Express 应用处理，静态文件由 Vercel 处理
 
 ## 环境变量配置
 
