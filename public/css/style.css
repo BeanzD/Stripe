@@ -646,6 +646,11 @@ body {
         font-size: 2rem;
     }
 
+    .hero-content h1 .author-name {
+        font-size: 0.7em;
+        color: var(--text-light);
+    }
+
     .hero-subtitle {
         font-size: 1rem;
     }
