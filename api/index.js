@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
+// const path = require('path'); // Not needed for API-only
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
@@ -13,9 +13,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Remove static file serving for Vercel function as Vercel handles static files
-// const staticPath = path.join(__dirname, '..');
-// app.use(express.static(staticPath, ...));
+// Static files are handled by Vercel's public directory feature.
+// This API function only handles requests to /api/*
 
 const customers = [];
 const products = [];
