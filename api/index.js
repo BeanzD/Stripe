@@ -1,6 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-// const path = require('path'); // Not needed for API-only
+const path = require('path');
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
@@ -13,8 +14,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Static files are handled by Vercel's public directory feature.
-// This API function only handles requests to /api/*
+// 静态文件服务 - 本地开发需要
+const staticPath = path.join(__dirname, '..', 'public');
+app.use(express.static(staticPath, {
+    setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.css') {
+            res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        } else if (ext === '.js') {
+            res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (ext === '.svg') {
+            res.setHeader('Content-Type', 'image/svg+xml');
+        } else if (ext === '.html') {
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        }
+    }
+}));
 
 const customers = [];
 const products = [];
@@ -405,6 +420,15 @@ app.post('/api/test-payment', async (req, res) => {
             paymentIntentId: null
         });
     }
+});
+
+// 根路由 - 返回首页
+app.get('/', (req, res) => {
+    res.sendFile(require('path').join(__dirname, '..', 'public', 'index.html'));
+});
+
+app.get('/demos.html', (req, res) => {
+    res.sendFile(require('path').join(__dirname, '..', 'public', 'demos.html'));
 });
 
 app.get('/api/config', (req, res) => {
