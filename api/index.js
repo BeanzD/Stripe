@@ -416,6 +416,34 @@ app.get('/api/config', (req, res) => {
 
 
 
+
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'Stripe API is running correctly',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// 最后的 fallback 路由，用于诊断
+app.use((req, res) => {
+    console.log(`[404] Path not found: ${req.path}`);
+    res.status(404).send(`
+        <div style="font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
+            <h1>404 Not Found (API)</h1>
+            <p>请求的路径 <code>${req.path}</code> 未在 API 中定义。</p>
+            <hr>
+            <h3>调试信息：</h3>
+            <ul>
+                <li>如果你是在访问根路径 (/) 看到此页面，说明 Vercel 的路由配置有问题，静态文件请求被错误转发到了 API。</li>
+                <li>请检查 vercel.json 的 rewrites 配置。</li>
+                <li>当前时间：${new Date().toISOString()}</li>
+            </ul>
+            <p><a href="/index.html">尝试访问 /index.html</a></p>
+        </div>
+    `);
+});
+
 module.exports = (req, res) => {
     app(req, res);
 };
